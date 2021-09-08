@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package ble_ws;
+
+message Uuid {
+    fixed32 time_low = 1;
+    uint32 time_mid = 2;
+    uint32 time_hi_and_version = 3;
+    uint32 clock_seq_hi_and_reserved = 4;
+    uint32 clock_seq_low = 5;
+    uint64 node = 6;
+}
+
+message OverviewRequest {}
+
+message OverviewResponse { repeated OverviewResponseField overview = 1; }
+
+message OverviewResponseField {
+    Uuid id = 1;
+    SensorOverview overview = 2;
+}
+
+message Label { string name = 1; }
+
+message SensorOverview {
+  Label label = 1;
+  CurrentValues values = 2;
+}
+
+message CurrentValues {
+  sint32 temperature = 1;
+  fixed32 pressure = 2;
+  uint32 humidity = 3;
+}
+
+message SensorDataRequest {
+  Uuid id = 1;
+  fixed32 start = 2;
+  fixed32 end = 3;
+}
+
+message SensorDataResponse {
+  repeated sint32 temperature = 1;
+  repeated fixed32 pressure = 2;
+  repeated uint32 humidity = 3;
+  repeated fixed32 time = 4;
+}
+
+message SubscribeToChangesRequest {}
+
+message ChangeLabelRequest {
+  Uuid id = 1;
+  Label label = 2;
+}
+
+message ChangeLabelResponse {}
+
+service BleWeatherstationService {
+  rpc GetSensorData(SensorDataRequest) returns (SensorDataResponse);
+  rpc Overview(OverviewRequest) returns (OverviewResponse);
+  rpc SubscribeToChanges(SubscribeToChangesRequest)
+      returns (stream OverviewResponse);
+  rpc ChangeLabel(ChangeLabelRequest) returns (ChangeLabelResponse);
+}
