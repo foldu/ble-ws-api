@@ -55,10 +55,18 @@ message ChangeLabelRequest {
 
 message ChangeLabelResponse {}
 
+message BackupRequest {}
+
+message BackupResponse {
+    Uuid id = 1;
+    SensorDataResponse chunk = 2;
+}
+
 service BleWeatherstationService {
   rpc GetSensorData(SensorDataRequest) returns (SensorDataResponse);
   rpc Overview(OverviewRequest) returns (OverviewResponse);
   rpc SubscribeToChanges(SubscribeToChangesRequest)
       returns (stream OverviewResponse);
   rpc ChangeLabel(ChangeLabelRequest) returns (ChangeLabelResponse);
+  rpc Backup(BackupRequest) returns (stream BackupResponse);
 }
